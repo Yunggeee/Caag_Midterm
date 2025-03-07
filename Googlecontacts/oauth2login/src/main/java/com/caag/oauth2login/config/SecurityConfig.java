@@ -44,9 +44,6 @@ public class SecurityConfig {
                 .build();
     }
 
-    /**
-     * OAuth2 Authorized Client Manager to manage tokens.
-     */
     @Bean
     public OAuth2AuthorizedClientManager authorizedClientManager(
             ClientRegistrationRepository clientRegistrationRepository,

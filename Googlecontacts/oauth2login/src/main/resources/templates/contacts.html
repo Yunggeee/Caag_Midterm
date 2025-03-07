@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Contact Management</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        padding: 20px;
+      }
+
+      .container {
+        width: 1550px;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 35px;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(15px);
+        text-align: center;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* User Profile Card */
+      .user-profile-card {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.6s ease-in-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .profile-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .profile-info {
+        margin-left: 20px;
+        text-align: left;
+        flex: 1;
+      }
+
+      .profile-info h2 {
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+      }
+
+      .profile-info p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+      }
+
+      .profile-stats {
+        display: flex;
+        gap: 20px;
+        margin-left: auto;
+      }
+
+      .stat-item {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 10px 15px;
+        border-radius: 10px;
+        min-width: 100px;
+      }
+
+      .stat-number {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: white;
+      }
+
+      .stat-label {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 15px;
+        padding: 15px 25px;
+        backdrop-filter: blur(10px);
+      }
+
+      .header h1 {
+        font-size: 2rem;
+        color: white;
+        font-weight: 600;
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 12px;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        transition: 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+      }
+
+      .btn-primary {
+        background: white;
+        color: #764ba2;
+        font-weight: 600;
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .form-container {
+        display: none;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        margin-bottom: 20px;
+        text-align: left;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-title {
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .form-title i {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 8px;
+        border-radius: 8px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-label {
+        color: white;
+        font-weight: 500;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .form-label i {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      .form-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .form-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .remove-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      .remove-btn:hover {
+        background: rgba(255, 0, 0, 0.3);
+      }
+
+      .main-content {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        color: white;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+      }
+
+      th {
+        background: rgba(255, 255, 255, 0.3);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      th:first-child {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+      }
+
+      th:last-child {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+      }
+
+      tbody tr {
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      td:first-child {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        font-weight: 500;
+      }
+
+      td:last-child {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+      }
+
+      .contact-info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .contact-info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .contact-info-item i {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 5px;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn-edit,
+      .btn-delete {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 8px;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      .btn-edit:hover {
+        background: rgba(52, 152, 219, 0.5);
+      }
+
+      .btn-delete:hover {
+        background: rgba(231, 76, 60, 0.5);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 0;
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.7;
+      }
+
+      .empty-state p {
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 30px 0;
+      }
+
+      .loading i {
+        font-size: 2rem;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 992px) {
+        .profile-stats {
+          display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          width: 95%;
+          padding: 20px;
+        }
+
+        .user-profile-card {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .profile-info {
+          margin-left: 0;
+          margin-top: 15px;
+          text-align: center;
+        }
+
+        .header {
+          flex-direction: column;
+          text-align: center;
+          gap: 15px;
+          padding: 15px;
+        }
+
+        .form-container {
+          padding: 15px;
+        }
+
+        .main-content {
+          padding: 15px;
+        }
+
+        table {
+          display: block;
+          overflow-x: auto;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="user-profile-card">
+        <img
+          id="userProfileImage"
+          src="https://ui-avatars.com/api/?name=Contact+User&background=764ba2&color=fff&size=80"
+          alt="Profile"
+          class="profile-image"
+        />
+        <div class="profile-info">
+          <h2 id="userName">Loading...</h2>
+          <p id="userEmail">Loading...</p>
+        </div>
+        <div class="profile-stats">
+          <div class="stat-item">
+            <div class="stat-number" id="contactCount">0</div>
+            <div class="stat-label">Contacts</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="lastUpdated">Today</div>
+            <div class="stat-label">Last Updated</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="header">
+        <h1>Contact Management</h1>
+        <div class="nav-buttons">
+          <a href="/index" class="btn btn-secondary">
+            <i class="fas fa-home"></i>
+            Home
+          </a>
+          <button onclick="showAddForm()" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Add Contact
+          </button>
+        </div>
+      </div>
+
+      <!-- Add Contact Form -->
+      <div id="addContactForm" class="form-container">
+        <h2 class="form-title">
+          <i class="fas fa-user-plus"></i> Add New Contact
+        </h2>
+        <form id="addContactForm" autocomplete="on">
+          <div class="form-group">
+            <label class="form-label"
+              ><i class="fas fa-user"></i> First Name</label
+            >
+            <input
+              type="text"
+              id="firstName"
+              class="form-input"
+              placeholder="Enter first name"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              ><i class="fas fa-user"></i> Last Name</label
+            >
+            <input
+              type="text"
+              id="lastName"
+              class="form-input"
+              placeholder="Enter last name"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              ><i class="fas fa-birthday-cake"></i> Birthday</label
+            >
+            <input type="date" id="birthday" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              ><i class="fas fa-envelope"></i> Email Addresses</label
+            >
+            <div id="addEmailList" class="contact-list"></div>
+            <button
+              type="button"
+              onclick="addEmailField('addEmailList')"
+              class="btn btn-secondary"
+            >
+              <i class="fas fa-plus"></i> Add Email
+            </button>
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              ><i class="fas fa-phone"></i> Phone Numbers</label
+            >
+            <div id="addPhoneList" class="contact-list"></div>
+            <button
+              type="button"
+              onclick="addPhoneField('addPhoneList')"
+              class="btn btn-secondary"
+            >
+              <i class="fas fa-plus"></i> Add Phone
+            </button>
+          </div>
+          <div
+            class="form-group"
+            style="display: flex; flex-direction: row; gap: 10px"
+          >
+            <button type="submit" class="btn btn-primary" style="flex: 1">
+              <i class="fas fa-save"></i> Add Contact
+            </button>
+            <button
+              type="button"
+              onclick="hideAddForm()"
+              class="btn btn-secondary"
+              style="flex: 1"
+            >
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Update Contact Form -->
+      <div id="updateContactForm" class="form-container">
+        <h2 class="form-title">
+          <i class="fas fa-user-edit"></i> Update Contact
+        </h2>
+        <form id="updateContactForm" autocomplete="on">
+          <input type="hidden" id="resourceName" />
+          <div class="form-group">
+            <label class="form-label"
+              ><i class="fas fa-user"></i> First Name</label
+            >
+            <input
+              type="text"
+              id="updateFirstName"
+              class="form-input"
+              placeholder="Enter first name"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              ><i class="fas fa-user"></i> Last Name</label
+            >
+            <input
+              type="text"
+              id="updateLastName"
+              class="form-input"
+              placeholder="Enter last name"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              ><i class="fas fa-birthday-cake"></i> Birthday</label
+            >
+            <input type="date" id="updateBirthday" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              ><i class="fas fa-envelope"></i> Email Addresses</label
+            >
+            <div id="updateEmailList" class="contact-list"></div>
+            <button
+              type="button"
+              onclick="addEmailField('updateEmailList')"
+              class="btn btn-secondary"
+            >
+              <i class="fas fa-plus"></i> Add Email
+            </button>
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              ><i class="fas fa-phone"></i> Phone Numbers</label
+            >
+            <div id="updatePhoneList" class="contact-list"></div>
+            <button
+              type="button"
+              onclick="addPhoneField('updatePhoneList')"
+              class="btn btn-secondary"
+            >
+              <i class="fas fa-plus"></i> Add Phone
+            </button>
+          </div>
+          <div
+            class="form-group"
+            style="display: flex; flex-direction: row; gap: 10px"
+          >
+            <button type="submit" class="btn btn-primary" style="flex: 1">
+              <i class="fas fa-save"></i> Update Contact
+            </button>
+            <button
+              type="button"
+              onclick="hideUpdateForm()"
+              class="btn btn-secondary"
+              style="flex: 1"
+            >
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="main-content">
+        <table class="contacts-table" id="contacts-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Birthday</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="5" class="loading">
+                <i class="fas fa-spinner"></i> Loading contacts...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      async function fetchUserProfile() {
+        try {
+          const response = await fetch("/api/user/profile");
+          if (!response.ok) {
+            throw new Error("Failed to fetch user profile");
+          }
+          const userData = await response.json();
+
+          // Update profile image
+          if (userData.picture) {
+            document.getElementById("userProfileImage").src = userData.picture;
+          } else {
+            document.getElementById(
+              "userProfileImage"
+            ).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              userData.name
+            )}&background=764ba2&color=fff&size=80`;
+          }
+
+          // Update name and email
+          document.getElementById("userName").textContent =
+            userData.name || "Contact User";
+          document.getElementById("userEmail").textContent =
+            userData.email || "No email available";
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+          // Set default values if fetch fails
+          document.getElementById("userName").textContent = "Contact User";
+          document.getElementById("userEmail").textContent = "user@example.com";
+        }
+      }
+
+      // Call the function when the page loads
+      document.addEventListener("DOMContentLoaded", fetchUserProfile);
+      function showAddForm() {
+        document.getElementById("addContactForm").style.display = "block";
+        document.getElementById("updateContactForm").style.display = "none";
+        clearAddForm();
+        addEmailField("addEmailList");
+        addPhoneField("addPhoneList");
+      }
+
+      function hideAddForm() {
+        document.getElementById("addContactForm").style.display = "none";
+      }
+
+      function showUpdateForm(
+        resourceName,
+        name,
+        emailAddresses,
+        phoneNumbers,
+        birthdays
+      ) {
+        try {
+          document.getElementById("updateContactForm").style.display = "block";
+          document.getElementById("addContactForm").style.display = "none";
+
+          // Set resource name
+          document.getElementById("resourceName").value = resourceName;
+
+          // Split name into first and last name
+          const nameParts = name.split(" ");
+          document.getElementById("updateFirstName").value = nameParts[0] || "";
+          document.getElementById("updateLastName").value =
+            nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+
+          // Set birthday if available
+          if (birthdays && birthdays.length > 0 && birthdays[0].date) {
+            const date = birthdays[0].date;
+            const formattedDate = `${date.year}-${String(date.month).padStart(
+              2,
+              "0"
+            )}-${String(date.day).padStart(2, "0")}`;
+            document.getElementById("updateBirthday").value = formattedDate;
+          } else {
+            document.getElementById("updateBirthday").value = "";
+          }
+
+          // Clear and populate email fields
+          const emailList = document.getElementById("updateEmailList");
+          emailList.innerHTML = "";
+          if (emailAddresses && emailAddresses.length > 0) {
+            emailAddresses.forEach((email) => {
+              const div = document.createElement("div");
+              div.className = "contact-item";
+              div.innerHTML = `
+                            <input type="email" class="form-input" value="${email.value}" required>
+                            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+              emailList.appendChild(div);
+            });
+          } else {
+            addEmailField("updateEmailList");
+          }
+
+          // Clear and populate phone fields
+          const phoneList = document.getElementById("updatePhoneList");
+          phoneList.innerHTML = "";
+          if (phoneNumbers && phoneNumbers.length > 0) {
+            phoneNumbers.forEach((phone) => {
+              const div = document.createElement("div");
+              div.className = "contact-item";
+              div.innerHTML = `
+                            <input type="tel" class="form-input" value="${phone.value}" required>
+                            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+              phoneList.appendChild(div);
+            });
+          } else {
+            addPhoneField("updatePhoneList");
+          }
+        } catch (error) {
+          console.error("Error in showUpdateForm:", error);
+          alert(
+            "There was an error displaying the update form. Please try again."
+          );
+        }
+      }
+
+      function hideUpdateForm() {
+        document.getElementById("updateContactForm").style.display = "none";
+      }
+
+      function addEmailField(containerId) {
+        const container = document.getElementById(containerId);
+        const div = document.createElement("div");
+        div.className = "contact-item";
+        div.innerHTML = `
+                <input type="email" class="form-input" placeholder="Email Address" required>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+        container.appendChild(div);
+      }
+
+      function addPhoneField(containerId) {
+        const container = document.getElementById(containerId);
+        const div = document.createElement("div");
+        div.className = "contact-item";
+        div.innerHTML = `
+                <input type="tel" class="form-input" placeholder="Phone Number" required>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+        container.appendChild(div);
+      }
+
+      function getContactValues(containerId) {
+        const container = document.getElementById(containerId);
+        const inputs = container.getElementsByTagName("input");
+        return Array.from(inputs)
+          .map((input) => input.value)
+          .filter((value) => value.trim() !== "");
+      }
+
+      function clearAddForm() {
+        document.getElementById("firstName").value = "";
+        document.getElementById("lastName").value = "";
+        document.getElementById("birthday").value = "";
+        document.getElementById("addEmailList").innerHTML = "";
+        document.getElementById("addPhoneList").innerHTML = "";
+      }
+
+      function showEmptyState() {
+        const tbody = document.querySelector("#contacts-table tbody");
+        tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        <i class="fas fa-address-book"></i>
+                        <p>No contacts found</p>
+                        <button onclick="showAddForm()" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Your First Contact
+                        </button>
+                    </td>
+                </tr>
+            `;
+      }
+
+      function showLoadingState() {
+        const tbody = document.querySelector("#contacts-table tbody");
+        tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="loading">
+                        <i class="fas fa-spinner"></i> Loading contacts...
+                    </td>
+                </tr>
+            `;
+      }
+
+      function fetchContacts() {
+        showLoadingState();
+        $.get("/contacts", function (data) {
+          const tbody = document.querySelector("#contacts-table tbody");
+          tbody.innerHTML = "";
+
+          try {
+            if (typeof data === "string") {
+              data = JSON.parse(data);
+            }
+
+            // Update contact count in the profile card
+            if (data.connections) {
+              document.getElementById("contactCount").textContent =
+                data.connections.length;
+              document.getElementById("lastUpdated").textContent =
+                new Date().toLocaleDateString();
+            }
+
+            if (!data.connections || data.connections.length === 0) {
+              showEmptyState();
+              return;
+            }
+
+            data.connections.forEach((contact) => {
+              const name = contact.names
+                ? contact.names[0].displayName
+                : "No Name";
+
+              // Format emails with icons
+              let emailsHtml = '<div class="contact-info-list">';
+              if (contact.emailAddresses && contact.emailAddresses.length > 0) {
+                emailsHtml += contact.emailAddresses
+                  .map(
+                    (e) =>
+                      `<div class="contact-info-item">
+                                    <i class="fas fa-envelope"></i>
+                                    ${e.value}
+                                </div>`
+                  )
+                  .join("");
+              } else {
+                emailsHtml += `<div class="contact-info-item">
+                                <i class="fas fa-envelope"></i>
+                                No Email
+                            </div>`;
+              }
+              emailsHtml += "</div>";
+
+              // Format phone numbers with icons
+              let phonesHtml = '<div class="contact-info-list">';
+              if (contact.phoneNumbers && contact.phoneNumbers.length > 0) {
+                phonesHtml += contact.phoneNumbers
+                  .map(
+                    (p) =>
+                      `<div class="contact-info-item">
+                                    <i class="fas fa-phone"></i>
+                                    ${p.value}
+                                </div>`
+                  )
+                  .join("");
+              } else {
+                phonesHtml += `<div class="contact-info-item">
+                                <i class="fas fa-phone"></i>
+                                No Phone
+                            </div>`;
+              }
+              phonesHtml += "</div>";
+
+              let birthday = "No Birthday";
+              if (
+                contact.birthdays &&
+                contact.birthdays.length > 0 &&
+                contact.birthdays[0].date
+              ) {
+                const date = contact.birthdays[0].date;
+                birthday = `${date.year}-${String(date.month).padStart(
+                  2,
+                  "0"
+                )}-${String(date.day).padStart(2, "0")}`;
+              }
+
+              // Escape special characters in the name
+              const escapedName = name
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"');
+
+              // Create safe JSON strings for the data
+              const safeEmailAddresses = JSON.stringify(
+                contact.emailAddresses || []
+              ).replace(/"/g, "&quot;");
+              const safePhoneNumbers = JSON.stringify(
+                contact.phoneNumbers || []
+              ).replace(/"/g, "&quot;");
+              const safeBirthdays = JSON.stringify(
+                contact.birthdays || []
+              ).replace(/"/g, "&quot;");
+              const safeResourceName = contact.resourceName
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"');
+
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                            <td>${name}</td>
+                            <td>${emailsHtml}</td>
+                            <td>${phonesHtml}</td>
+                            <td>
+                                <div class="contact-info-item">
+                                    <i class="fas fa-calendar"></i>
+                                    ${birthday}
+                                </div>
+                            </td>
+                            <td class="action-buttons">
+                                <button onclick='handleUpdate("${safeResourceName}", "${escapedName}", ${safeEmailAddresses}, ${safePhoneNumbers}, ${safeBirthdays})' class="btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteContact('${safeResourceName}')" class="btn-delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        `;
+              tbody.appendChild(row);
+            });
+          } catch (error) {
+            console.error("Error parsing contacts:", error);
+            alert("Failed to process contact data.");
+          }
+        }).fail(function (xhr) {
+          if (xhr.status === 403) {
+            alert(
+              "Access Denied: Insufficient Permissions. Please log in again."
+            );
+            window.location.href = "/logout";
+          } else {
+            alert("Failed to fetch contacts.");
+          }
+        });
+      }
+
+      $("#addContactForm").submit(function (event) {
+        event.preventDefault();
+        const emails = getContactValues("addEmailList");
+        const phones = getContactValues("addPhoneList");
+
+        $.post("/contacts/add", {
+          firstName: $("#firstName").val(),
+          lastName: $("#lastName").val(),
+          birthday: $("#birthday").val(),
+          emails: emails,
+          phoneNumbers: phones,
+        })
+          .done(function () {
+            alert("Contact added successfully!");
+            hideAddForm();
+            fetchContacts();
+          })
+          .fail(function () {
+            alert("Failed to add contact.");
+          });
+      });
+
+      $("#updateContactForm").submit(function (event) {
+        event.preventDefault();
+        const emails = getContactValues("updateEmailList");
+        const phones = getContactValues("updatePhoneList");
+
+        const updateData = {
+          resourceName: $("#resourceName").val(),
+          firstName: $("#updateFirstName").val(),
+          lastName: $("#updateLastName").val(),
+          birthday: $("#updateBirthday").val(),
+          emails: emails,
+          phoneNumbers: phones,
+        };
+
+        $.ajax({
+          url: "/contacts/update",
+          type: "PATCH",
+          contentType: "application/json",
+          data: JSON.stringify(updateData),
+          success: function (response) {
+            if (response.includes("Error")) {
+              alert(response);
+            } else {
+              alert("Contact updated successfully!");
+              hideUpdateForm();
+              fetchContacts();
+            }
+          },
+          error: function (xhr) {
+            console.error("Update error:", xhr.responseText);
+            alert("Failed to update contact. Please try again.");
+          },
+        });
+      });
+
+      function deleteContact(resourceName) {
+        if (confirm("Are you sure you want to delete this contact?")) {
+          $.ajax({
+            url: "/contacts/delete",
+            type: "DELETE",
+            data: { resourceName: resourceName },
+            success: function () {
+              alert("Contact deleted successfully!");
+              fetchContacts();
+            },
+            error: function () {
+              alert("Failed to delete contact.");
+            },
+          });
+        }
+      }
+
+      // Add this new function to handle the update click
+      function handleUpdate(
+        resourceName,
+        name,
+        emailAddresses,
+        phoneNumbers,
+        birthdays
+      ) {
+        try {
+          console.log("Update clicked for:", {
+            resourceName,
+            name,
+            emailAddresses,
+            phoneNumbers,
+            birthdays,
+          });
+          showUpdateForm(
+            resourceName,
+            name,
+            emailAddresses,
+            phoneNumbers,
+            birthdays
+          );
+        } catch (error) {
+          console.error("Error in handleUpdate:", error);
+          alert(
+            "There was an error preparing the update form. Please try again."
+          );
+        }
+      }
+
+      $(document).ready(function () {
+        fetchContacts();
+      });
+    </script>
+  </body>
+</html>

@@ -1,11 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <title>Welcome to Contact Manager</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       * {
         margin: 0;
@@ -18,16 +26,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        min-height: 100vh;
         background: linear-gradient(135deg, #667eea, #764ba2);
-        overflow: hidden;
+        overflow-x: hidden;
         padding: 20px;
       }
 
       .container {
         width: 1600px;
+        max-width: 100%;
         background: rgba(255, 255, 255, 0.15);
-        padding: 50px; /* More padding for spacing */
+        padding: 50px;
         border-radius: 18px;
         box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         backdrop-filter: blur(20px);
@@ -53,16 +62,57 @@
         margin-bottom: 30px;
       }
 
-      .user-info {
+      .user-profile-card {
+        display: flex;
+        align-items: center;
+        border-radius: 15px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.6s ease-in-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .profile-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .profile-info {
+        margin-left: 15px;
         text-align: left;
+      }
+
+      .profile-info h2 {
         color: white;
         font-size: 1.2rem;
-        font-weight: 500;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+
+      .profile-info p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        margin-bottom: 0;
       }
 
       .logout-button {
         padding: 10px 25px;
-        background: #764ba2;
+        background: rgba(255, 255, 255, 0.2);
         color: white;
         border: none;
         border-radius: 10px;
@@ -71,63 +121,47 @@
         font-size: 1rem;
         transition: all 0.3s ease;
         font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
 
       .logout-button:hover {
-        background: #58367a;
+        background: rgba(255, 255, 255, 0.3);
         transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       }
 
       .logo {
-        font-size: 4rem; /* Bigger Logo */
+        font-size: 4rem;
         color: white;
         margin-bottom: 15px;
         display: inline-block;
         background: rgba(255, 255, 255, 0.2);
         padding: 15px;
         border-radius: 50%;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
       }
 
       h1 {
-        font-size: 2.2rem; /* Slightly Bigger Heading */
+        font-size: 2.5rem;
         color: white;
         margin-bottom: 15px;
+        font-weight: 700;
       }
 
       p {
-        font-size: 1.1rem;
-        color: #e0e0e0;
-        margin-bottom: 25px;
-      }
-
-      .contact-banner {
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 14px;
-        padding: 25px;
-        margin: 25px 0;
-        color: white;
-        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        text-decoration: none;
-        display: block;
-        backdrop-filter: blur(12px);
-      }
-
-      .contact-banner:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
-      }
-
-      .contact-banner h2 {
-        font-size: 1.8rem;
-        margin-bottom: 12px;
-        font-weight: 600;
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 30px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       .contact-button {
         display: inline-block;
-        padding: 14px 28px;
+        padding: 15px 30px;
         font-size: 1.1rem;
         color: #764ba2;
         background: white;
@@ -136,44 +170,80 @@
         cursor: pointer;
         text-decoration: none;
         transition: all 0.3s ease;
-        font-weight: 500;
+        font-weight: 600;
+        margin-top: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       }
 
       .contact-button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 18px rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .footer {
+        margin-top: 40px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
       }
 
       @media (max-width: 768px) {
         .container {
           width: 90%;
-          padding: 40px;
+          padding: 40px 30px;
+        }
+
+        h1 {
+          font-size: 2.2rem;
         }
       }
 
-      @media (max-width: 480px) {
+      @media (max-width: 576px) {
         .container {
           width: 95%;
-          padding: 30px;
+          padding: 30px 20px;
         }
 
         .header {
           flex-direction: column;
           text-align: center;
-          gap: 15px;
+          gap: 20px;
+        }
+
+        .user-profile-card {
+          flex-direction: column;
+          text-align: center;
+          padding: 15px;
+        }
+
+        .profile-info {
+          margin-left: 0;
+          margin-top: 10px;
+          text-align: center;
         }
 
         h1 {
           font-size: 1.8rem;
         }
 
+        p {
+          font-size: 1rem;
+        }
+
         .contact-banner {
-          padding: 20px;
+          padding: 25px 20px;
+        }
+
+        .contact-banner h2 {
+          font-size: 1.6rem;
         }
 
         .contact-button {
-          padding: 12px 22px;
+          padding: 12px 25px;
           font-size: 1rem;
+        }
+
+        .logo {
+          font-size: 3rem;
         }
       }
     </style>
@@ -181,30 +251,73 @@
   <body>
     <div class="container">
       <div class="header">
-        <div class="user-info">
-          <span
-            th:if="${#authentication != null and #authentication.principal != null}"
-            th:text="${#authentication.principal.attributes != null ? #authentication.principal.attributes.name : 'User'}"
-          >
-            User
-          </span>
-          <span
-            th:unless="${#authentication != null and #authentication.principal != null}"
-          >
-          </span>
+        <div class="user-profile-card">
+          <img
+            id="userProfileImage"
+            src="https://ui-avatars.com/api/?name=Contact+User&background=764ba2&color=fff&size=80"
+            alt="Profile"
+            class="profile-image"
+          />
+          <div class="profile-info">
+            <h2 id="userName">Loading...</h2>
+            <p id="userEmail">Loading...</p>
+          </div>
         </div>
-        <a href="/logout" class="logout-button">Logout</a>
+        <a href="/logout" class="logout-button">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
       </div>
 
       <div class="logo">📱</div>
-      <h1>Welcome</h1>
-      <p>Manage your contacts with ease</p>
+      <h1>Welcome to Contact Manager</h1>
+      <p>
+        Easily organize, manage, and access your contacts in one secure place
+      </p>
 
       <a href="/contacts/contacts-ui" class="contact-banner">
-        <h2>Open Contact Manager</h2>
-        <p>Access, add, update, and organize your contacts all in one place</p>
-        <span class="contact-button">Go to Contacts</span>
+        <span class="contact-button">
+          <i class="fas fa-address-card"></i> Go to Contacts
+        </span>
       </a>
+
+      <div class="footer">
+        &copy;
+        <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2023</span>
+        Contact Manager. All rights reserved.
+      </div>
     </div>
+    <script>
+      async function fetchUserProfile() {
+        try {
+          const response = await fetch("/api/user/profile");
+          if (!response.ok) {
+            throw new Error("Failed to fetch user profile");
+          }
+          const userData = await response.json();
+
+          if (userData.picture) {
+            document.getElementById("userProfileImage").src = userData.picture;
+          } else {
+            document.getElementById(
+              "userProfileImage"
+            ).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              userData.name
+            )}&background=764ba2&color=fff&size=80`;
+          }
+
+          document.getElementById("userName").textContent =
+            userData.name || "Contact User";
+          document.getElementById("userEmail").textContent =
+            userData.email || "No email available";
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+
+          document.getElementById("userName").textContent = "Contact User";
+          document.getElementById("userEmail").textContent = "user@example.com";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", fetchUserProfile);
+    </script>
   </body>
 </html>

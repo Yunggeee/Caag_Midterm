@@ -1,6 +1,5 @@
 package com.caag.oauth2login.service;
 
-// test comment
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -13,7 +12,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import java.util.List;
 
-// test
+
 @Service
 public class GoogleContactsService {
 
@@ -26,7 +25,7 @@ public class GoogleContactsService {
         this.objectMapper = objectMapper;
     }
 
-    // Fetch contacts
+
     public String getContacts(String accessToken) {
         String url = "https://people.googleapis.com/v1/people/me/connections?personFields=names,emailAddresses,phoneNumbers,birthdays";
 
@@ -47,7 +46,7 @@ public class GoogleContactsService {
         }
     }
 
-    // Add a new contact
+
     public String addContact(String accessToken, String firstName, String lastName, String birthday, List<String> emails, List<String> phoneNumbers) {
         String url = "https://people.googleapis.com/v1/people:createContact";
 
@@ -58,7 +57,7 @@ public class GoogleContactsService {
         ObjectNode requestBody = objectMapper.createObjectNode();
         requestBody.putArray("names").addObject().put("givenName", firstName).put("familyName", lastName);
         
-        // Add birthday if provided
+
         if (birthday != null && !birthday.isEmpty()) {
             ObjectNode birthdayNode = requestBody.putArray("birthdays").addObject();
             String[] dateParts = birthday.split("-");
@@ -68,7 +67,7 @@ public class GoogleContactsService {
             dateNode.put("day", Integer.parseInt(dateParts[2]));
         }
         
-        // Add multiple email addresses
+
         ArrayNode emailArray = requestBody.putArray("emailAddresses");
         for (String email : emails) {
             if (email != null && !email.isEmpty()) {
@@ -76,7 +75,7 @@ public class GoogleContactsService {
             }
         }
         
-        // Add multiple phone numbers
+
         ArrayNode phoneArray = requestBody.putArray("phoneNumbers");
         for (String phone : phoneNumbers) {
             if (phone != null && !phone.isEmpty()) {
@@ -101,7 +100,6 @@ public class GoogleContactsService {
     public String updateContact(String accessToken, String resourceName, String firstName, String lastName,
             String birthday, List<String> emails, List<String> phoneNumbers) {
 
-        // Build the update mask based on which fields are being updated
         StringBuilder updateMask = new StringBuilder();
         if (firstName != null && !firstName.isEmpty() && lastName != null && !lastName.isEmpty()) {
             updateMask.append("names,");
@@ -116,7 +114,7 @@ public class GoogleContactsService {
             updateMask.append("phoneNumbers,");
         }
         
-        // Remove the trailing comma if present
+
         if (updateMask.length() > 0) {
             updateMask.setLength(updateMask.length() - 1);
         }
@@ -127,7 +125,7 @@ public class GoogleContactsService {
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // First, get the current contact to get its etag
+
         String getUrl = "https://people.googleapis.com/v1/" + resourceName + "?personFields=names,birthdays,emailAddresses,phoneNumbers";
         HttpEntity<String> getEntity = new HttpEntity<>(headers);
         
@@ -136,16 +134,16 @@ public class GoogleContactsService {
             ObjectNode currentContact = (ObjectNode) objectMapper.readTree(getResponse.getBody());
             String etag = currentContact.get("etag").asText();
 
-            // Create the request body
+
             ObjectNode requestBody = objectMapper.createObjectNode();
             requestBody.put("etag", etag);
 
-            // Add the fields to update
+
             if (firstName != null && !firstName.isEmpty() && lastName != null && !lastName.isEmpty()) {
                 requestBody.putArray("names").addObject().put("givenName", firstName).put("familyName", lastName);
             }
             
-            // Add birthday if provided
+
             if (birthday != null && !birthday.isEmpty()) {
                 ObjectNode birthdayNode = requestBody.putArray("birthdays").addObject();
                 String[] dateParts = birthday.split("-");
@@ -155,7 +153,7 @@ public class GoogleContactsService {
                 dateNode.put("day", Integer.parseInt(dateParts[2]));
             }
             
-            // Add multiple email addresses
+
             if (emails != null && !emails.isEmpty()) {
                 ArrayNode emailArray = requestBody.putArray("emailAddresses");
                 for (String email : emails) {
@@ -165,7 +163,7 @@ public class GoogleContactsService {
                 }
             }
             
-            // Add multiple phone numbers
+
             if (phoneNumbers != null && !phoneNumbers.isEmpty()) {
                 ArrayNode phoneArray = requestBody.putArray("phoneNumbers");
                 for (String phone : phoneNumbers) {
@@ -191,7 +189,7 @@ public class GoogleContactsService {
         }
     }
 
-    // Delete a contact
+
     public String deleteContact(String accessToken, String resourceName) {
         String url = "https://people.googleapis.com/v1/" + resourceName + ":deleteContact";
 

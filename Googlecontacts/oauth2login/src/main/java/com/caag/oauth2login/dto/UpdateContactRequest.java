@@ -1,4 +1,3 @@
-// UpdateContactRequest.java
 package com.caag.oauth2login.dto;
 
 import java.util.List;
@@ -11,7 +10,6 @@ public class UpdateContactRequest {
     private List<String> emails;
     private List<String> phoneNumbers;
 
-    // Getters and setters
     public String getResourceName() {
         return resourceName;
     }
